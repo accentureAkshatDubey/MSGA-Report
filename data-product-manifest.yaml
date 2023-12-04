@@ -1,4 +1,4 @@
-version: 0.0.19
+version: 0.0.20
 jobId: "738"
 jobName: MSGA_Report
 jobType: Aggregated Data Product
@@ -6,21 +6,8 @@ alias: Ingesting_data_into_adp_msga_report
 discoveryPort:
   name: MSGA_Report
 inputPorts:
-  - alias: Dealer_Master_1
-    description: Dealer master data.
-    tags: []
-    extra: {}
-    syncType: pull
-    type: dataproduct
-    filter: ""
-    projection: []
-    dataProductUrn: urn:dv:dataproduct:54ddeeb9-ff9a-4d57-8fbc-afafa0d45fe9
-    persistDataFrame: false
-    entity:
-      advanceOptions:
-        mergeSchema: false
   - alias: Geography_Master_1
-    description: Geography master data.
+    description: ""
     tags: []
     extra: {}
     syncType: pull
@@ -32,8 +19,21 @@ inputPorts:
     entity:
       advanceOptions:
         mergeSchema: false
+  - alias: Dealer_Master_1
+    description: ""
+    tags: []
+    extra: {}
+    syncType: pull
+    type: dataproduct
+    filter: ""
+    projection: []
+    dataProductUrn: urn:dv:dataproduct:54ddeeb9-ff9a-4d57-8fbc-afafa0d45fe9
+    persistDataFrame: false
+    entity:
+      advanceOptions:
+        mergeSchema: false
   - alias: Parts_Accessories_Master_1
-    description: Reading parts accessories master data.
+    description: ""
     tags: []
     extra: {}
     syncType: pull
@@ -46,7 +46,7 @@ inputPorts:
       advanceOptions:
         mergeSchema: false
   - alias: Accessories_Sales_1
-    description: Reading accessories sales data.
+    description: ""
     tags: []
     extra: {}
     syncType: pull
