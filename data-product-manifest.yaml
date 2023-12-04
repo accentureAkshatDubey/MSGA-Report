@@ -1,4 +1,4 @@
-version: 0.0.21
+version: 0.0.22
 jobId: "738"
 jobName: MSGA_Report
 jobType: Aggregated Data Product
@@ -127,9 +127,6 @@ productState:
     enforceSchema: false
     enforceSchemaMethod: Warning
     catalogType: glue
-    loggingOptions:
-      printSchema: true
-      showData: true
   refreshInterval: None
 transformation:
   - alias: Spark_SQL_1
@@ -169,7 +166,12 @@ transformation:
       - alias: Parts_Accessories_Master_1
         sqlReference: parts_accessories_master
 controlPort:
-  dataQualityRules: {}
+  dataQualityRules:
+    RecordCountCheck:
+      productState:
+        expression: ">="
+        number: 1
+        referenceAlias: Ingesting_data_into_adp_msga_report
 outputPort:
   subscriptionChannels:
     - channelType: Postgres
