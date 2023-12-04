@@ -1,0 +1,176 @@
+version: 0.0.17
+jobId: "738"
+jobName: MSGA
+jobType: Aggregated Data Product
+alias: Ingesting_data_into_adp_msga_report
+discoveryPort:
+  name: MSGA
+inputPorts:
+  - alias: Dealer_Master_1
+    description: ""
+    tags: []
+    extra: {}
+    syncType: pull
+    type: dataproduct
+    filter: ""
+    projection: []
+    dataProductUrn: urn:dv:dataproduct:54ddeeb9-ff9a-4d57-8fbc-afafa0d45fe9
+    persistDataFrame: false
+    entity:
+      advanceOptions:
+        mergeSchema: false
+  - alias: Geography_Master_1
+    description: ""
+    tags: []
+    extra: {}
+    syncType: pull
+    type: dataproduct
+    filter: ""
+    projection: []
+    dataProductUrn: urn:dv:dataproduct:53e98ba0-c6f7-4a2f-9d78-0b8a4eefdf71
+    persistDataFrame: false
+    entity:
+      advanceOptions:
+        mergeSchema: false
+  - alias: Accessories_Sales_1
+    description: ""
+    tags: []
+    extra: {}
+    syncType: pull
+    type: dataproduct
+    filter: ""
+    projection: []
+    dataProductUrn: urn:dv:dataproduct:b5b29d5a-edb2-47f1-8818-d83b9f80e675
+    persistDataFrame: false
+    entity:
+      advanceOptions:
+        mergeSchema: false
+  - alias: Parts_Accessories_Master_1
+    description: ""
+    tags: []
+    extra: {}
+    syncType: pull
+    type: dataproduct
+    filter: ""
+    projection: []
+    dataProductUrn: urn:dv:dataproduct:0be1464a-0830-4d11-990a-8a5b057c1b63
+    persistDataFrame: false
+    entity:
+      advanceOptions:
+        mergeSchema: false
+productState:
+  isDynamic: true
+  alias: Ingesting_data_into_adp_msga_report
+  retentionVersions: ""
+  logicalSchema:
+    properties:
+      MRP:
+        type: STRING
+        description: MRP
+      ITEM_VALUE:
+        type: STRING
+        description: Item value
+      state:
+        type: STRING
+        description: state
+      source_of_enquiry:
+        type: STRING
+        description: Source of enquiry
+      remarks:
+        type: STRING
+        description: Any remarks
+      mode_of_enquiry:
+        type: STRING
+        description: Mode of Enquiry
+      invoice_number:
+        type: STRING
+        description: Generated Invoice number
+      for_code:
+        type: STRING
+        description: For code
+      region:
+        type: STRING
+        description: Region
+      dealer_name:
+        type: STRING
+        description: Dealer name
+      dealer_code:
+        type: STRING
+        description: Dealer code
+      invoice_date:
+        type: DATETIME
+        description: Invoice Date
+      enquiry_number:
+        type: STRING
+        description: Enquiry number
+      etl_inserted_date:
+        type: DATETIME
+        description: ETL pipeline data insert date
+      etl_modified_date:
+        type: DATETIME
+        description: ETL pipeline modification date
+      etl_created_by:
+        type: STRING
+        description: ETL pipeline created by
+      etl_updated_by:
+        type: STRING
+        description: ETL pipeline updated by
+  stateStoreType: loadDataIceberg
+  isProfilingEnabled: false
+  updateStrategy: Overwrite
+  tableName: msil_transformed_layer.MSGA_Report
+  warehousePath: s3://dlp-platform-engine-bucket/
+  catalogName: glue
+  optional:
+    persistDataFrame: false
+    enableDataReconciliation: false
+    enforceSchema: false
+    enforceSchemaMethod: Warning
+    catalogType: glue
+    loggingOptions:
+      printSchema: true
+      showData: true
+  refreshInterval: None
+transformation:
+  - alias: Spark_SQL_1
+    type: SQL
+    description: tranformation logic for MSGA
+    query: select distinct SUM(MRP) AS MRP, SUM(ITEM_VALUE) AS ITEM_VALUE,  state,
+      source_of_enquiry, remarks, mode_of_enquiry, invoice_number, for_code,
+      region, dealer_name, dealer_code, invoice_date, enquiry_number,
+      enquiry_date, current_timestamp() as etl_inserted_date,
+      current_timestamp() as etl_modified_date, 'platform_admin' as
+      etl_created_by, 'platform_admin' as etl_updated_by from  (select distinct
+      PAM.MRP_1 AS MRP, ACC.ITEM_VALUE AS ITEM_VALUE,  IG.state_name as state,
+      acc.PH_ENQ_ENQ_SOURCE AS source_of_enquiry, acc.PH_ENQ_CUST_REMARKS AS
+      remarks, acc.PH_ENQ_ENQ_MOD AS mode_of_enquiry, acc.PH_ENQ_INVOICE_NUM AS
+      invoice_number, DM.FOR_CODE AS for_code, IG.region_name AS region,
+      DM.DEALER_NAME AS dealer_name, DM.MUL_DEALER_Code AS dealer_code,
+      acc.PH_ENQ_INVOICE_DATE AS invoice_date, ACC.PH_ENQ_ENQ_NUM AS
+      enquiry_number, ACC.PH_ENQ_ENQ_DATE AS enquiry_date
+      from  accessories_sales acc left join  parts_accessories_master pam on
+      acc.PD_ENQ_part_num = pam.PART_NUM_VAR  left JOIN dealer_master DM on
+      concat(acc.PH_ENQ_PARENT_GROUP,'|',cast(acc.PH_ENQ_DEALER_MAP_CD as
+      string),'|',acc.PH_ENQ_LOC_CD)=concat(DM.PARENT_GROUP,'|',cast(DM.dealer_map_code
+      as string),'|',DM.location_code)  left join geography_master ig on
+      TRIM(acc.PH_ENQ_CUST_STATE)=TRIM(ig.STATE_CODE) AND
+      DM.region_code=IG.REGION_CODE) GROUP BY  state, source_of_enquiry,
+      remarks, mode_of_enquiry, invoice_number, for_code, region, dealer_name,
+      dealer_code, invoice_date, enquiry_number, enquiry_date,
+      etl_inserted_date, etl_modified_date, etl_created_by, etl_updated_by
+    sequenceNo: 5
+    references:
+      - alias: Dealer_Master_1
+        sqlReference: dealer_master
+      - alias: Geography_Master_1
+        sqlReference: geography_master
+      - alias: Accessories_Sales_1
+        sqlReference: accessories_sales
+      - alias: Parts_Accessories_Master_1
+        sqlReference: parts_accessories_master
+controlPort:
+  dataQualityRules: {}
+outputPort:
+  subscriptionChannels:
+    - channelType: Postgres
+      queryType: SQL
