@@ -1,4 +1,4 @@
-version: 0.0.31
+version: 0.0.32
 jobId: "738"
 jobName: MSGA_Report
 jobType: Aggregated Data Product
@@ -74,23 +74,6 @@ inputPorts:
       dataProductUrn: urn:dv:dataproduct:b5b29d5a-edb2-47f1-8818-d83b9f80e675
     tableName: select * from
       glue.***catalogReference***.`b5b29d5a-edb2-47f1-8818-d83b9f80e675`
-  - alias: Customer_Master_1
-    isDynamic: true
-    dataProductUrn: urn:dv:dataproduct:1b79b15f-2356-40d2-b50e-bda2b08e13e0
-    projection: ""
-    filter: ""
-    warehousePath: "***s3StateBucket***"
-    type: readDataIceberg
-    catalogName: glue
-    optional:
-      persistDataFrame: false
-      advanceOptions:
-        endPoint: s3.undefined.amazonaws.com
-        accessKey: abc
-        secretKey: abc
-      dataProductUrn: urn:dv:dataproduct:1b79b15f-2356-40d2-b50e-bda2b08e13e0
-    tableName: select * from
-      glue.***catalogReference***.`1b79b15f-2356-40d2-b50e-bda2b08e13e0`
 productState:
   isDynamic: true
   alias: Ingesting_data_into_adp_msga_report
@@ -149,7 +132,7 @@ transformation:
       ig on TRIM(acc.PH_ENQ_CUST_STATE)= TRIM(ig.STATE_CODE)        AND
       DM.region_code = IG.REGION_CODE   )  GROUP
       BY    part_description,   location_description,   region_code,   state_code,   status,   enq_status,   enquiry_orderreadiness_date,   link_part_enquiry,   parent_group,   dealer_map_code,   location_code,   short_enq_no,   part_number,   CUSTOMER_NAME,   CUSTOMER_STATE,   state,    source_of_enquiry,    remarks,    mode_of_enquiry,    invoice_number,    for_code,    region,    dealer_name,    dealer_code,    invoice_date,    enquiry_number,    enquiry_date
-    sequenceNo: 6
+    sequenceNo: 5
     references:
       - alias: Dealer_Master_1
         sqlReference: dealer_master
@@ -159,8 +142,6 @@ transformation:
         sqlReference: accessories_sales
       - alias: Parts_Accessories_Master_1
         sqlReference: parts_accessories_master
-      - alias: Customer_Master_1
-        sqlReference: customer_master
 controlPort:
   dataQualityRules:
     RecordCountCheck:
