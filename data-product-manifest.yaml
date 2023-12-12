@@ -1,5 +1,5 @@
-version: 0.0.32
-jobId: "738"
+version: 0.0.11
+jobId: "786"
 jobName: MSGA_Report
 jobType: Aggregated Data Product
 alias: Ingesting_data_into_adp_msga_report
@@ -23,40 +23,6 @@ inputPorts:
       dataProductUrn: urn:dv:dataproduct:53e98ba0-c6f7-4a2f-9d78-0b8a4eefdf71
     tableName: select * from
       glue.***catalogReference***.`53e98ba0-c6f7-4a2f-9d78-0b8a4eefdf71`
-  - alias: Dealer_Master_1
-    isDynamic: true
-    dataProductUrn: urn:dv:dataproduct:54ddeeb9-ff9a-4d57-8fbc-afafa0d45fe9
-    projection: ""
-    filter: ""
-    warehousePath: "***s3StateBucket***"
-    type: readDataIceberg
-    catalogName: glue
-    optional:
-      persistDataFrame: false
-      advanceOptions:
-        endPoint: s3.undefined.amazonaws.com
-        accessKey: abc
-        secretKey: abc
-      dataProductUrn: urn:dv:dataproduct:54ddeeb9-ff9a-4d57-8fbc-afafa0d45fe9
-    tableName: select * from
-      glue.***catalogReference***.`54ddeeb9-ff9a-4d57-8fbc-afafa0d45fe9`
-  - alias: Parts_Accessories_Master_1
-    isDynamic: true
-    dataProductUrn: urn:dv:dataproduct:0be1464a-0830-4d11-990a-8a5b057c1b63
-    projection: ""
-    filter: ""
-    warehousePath: "***s3StateBucket***"
-    type: readDataIceberg
-    catalogName: glue
-    optional:
-      persistDataFrame: false
-      advanceOptions:
-        endPoint: s3.undefined.amazonaws.com
-        accessKey: abc
-        secretKey: abc
-      dataProductUrn: urn:dv:dataproduct:0be1464a-0830-4d11-990a-8a5b057c1b63
-    tableName: select * from
-      glue.***catalogReference***.`0be1464a-0830-4d11-990a-8a5b057c1b63`
   - alias: Accessories_Sales_1
     isDynamic: true
     dataProductUrn: urn:dv:dataproduct:b5b29d5a-edb2-47f1-8818-d83b9f80e675
@@ -74,6 +40,40 @@ inputPorts:
       dataProductUrn: urn:dv:dataproduct:b5b29d5a-edb2-47f1-8818-d83b9f80e675
     tableName: select * from
       glue.***catalogReference***.`b5b29d5a-edb2-47f1-8818-d83b9f80e675`
+  - alias: Parts_Accessories_Master_1
+    isDynamic: true
+    dataProductUrn: urn:dv:dataproduct:3ace113a-e949-4884-8b02-e1caddfcc28b
+    projection: ""
+    filter: ""
+    warehousePath: "***s3StateBucket***"
+    type: readDataIceberg
+    catalogName: glue
+    optional:
+      persistDataFrame: false
+      advanceOptions:
+        endPoint: s3.undefined.amazonaws.com
+        accessKey: abc
+        secretKey: abc
+      dataProductUrn: urn:dv:dataproduct:3ace113a-e949-4884-8b02-e1caddfcc28b
+    tableName: select * from
+      glue.***catalogReference***.`3ace113a-e949-4884-8b02-e1caddfcc28b`
+  - alias: Dealer_Master_1
+    isDynamic: true
+    dataProductUrn: urn:dv:dataproduct:54ddeeb9-ff9a-4d57-8fbc-afafa0d45fe9
+    projection: ""
+    filter: ""
+    warehousePath: "***s3StateBucket***"
+    type: readDataIceberg
+    catalogName: glue
+    optional:
+      persistDataFrame: false
+      advanceOptions:
+        endPoint: s3.undefined.amazonaws.com
+        accessKey: abc
+        secretKey: abc
+      dataProductUrn: urn:dv:dataproduct:54ddeeb9-ff9a-4d57-8fbc-afafa0d45fe9
+    tableName: select * from
+      glue.***catalogReference***.`54ddeeb9-ff9a-4d57-8fbc-afafa0d45fe9`
 productState:
   isDynamic: true
   alias: Ingesting_data_into_adp_msga_report
@@ -97,51 +97,60 @@ transformation:
   - alias: Spark_SQL_1
     type: SQL
     description: tranformation logic for MSGA
-    query: select    distinct SUM(MRP) AS MRP_1,    SUM(ITEM_VALUE) AS
-      ITEM_VALUE,    part_description,   location_description,   region_code,   state_code,   status,   enq_status,   enquiry_orderreadiness_date,   link_part_enquiry,   parent_group,   dealer_map_code,   location_code,   short_enq_no,   part_number,   CUSTOMER_NAME,   CUSTOMER_STATE,   state,    source_of_enquiry,    customer_remarks,    mode_of_enquiry,    invoice_number,    for_code,    region,    dealer_name,    dealer_code,    invoice_date,    enquiry_number,    enquiry_date
-      from    (     select        distinct PAM.MRP_1 AS
-      MRP,        ACC.ITEM_VALUE AS ITEM_VALUE,        IG.state_name as
-      state,        acc.PH_ENQ_ENQ_SOURCE AS
+    query: select SUM(MRP) AS MRP_1,    SUM(ITEM_VALUE) AS
+      ITEM_VALUE,    part_description,   location_description,   region_code,   state_code,   status,   enq_status,   city,   part_category,   part_lms_date,   category_description,   list_description,   enquiry_orderreadiness_date,   link_part_enquiry,   parent_group,   dealer_map_code,   location_code,   short_enq_no,   part_number,   CUSTOMER_NAME,   CUSTOMER_STATE,   state,    source_of_enquiry,    customer_remarks,    mode_of_enquiry,    invoice_number,    for_code,    region,    dealer_name,    dealer_code,    invoice_date,    enquiry_number,    enquiry_date,   part_quantity
+      from    (     select PAM.MRP_1 AS MRP,        ACC.ITEM_VALUE AS
+      ITEM_VALUE,        IG.state_name as state,        acc.PH_ENQ_ENQ_SOURCE AS
       source_of_enquiry,        ACC.PH_ENQ_CUST_REMARKS AS
       customer_remarks,        acc.PH_ENQ_ENQ_MOD AS
       mode_of_enquiry,        acc.PH_ENQ_INVOICE_NUM AS
       invoice_number,        DM.FOR_CODE AS for_code,        IG.region_name AS
       region,        DM.DEALER_NAME AS dealer_name,        DM.MUL_DEALER_Code AS
-      dealer_code,        acc.PH_ENQ_INVOICE_DATE AS invoice_date,     'I' AS
-      status,    'I' AS enq_status,       '' AS
+      dealer_code,        acc.PH_ENQ_INVOICE_DATE AS
+      invoice_date,     acc.status AS status,    acc.enq_status AS
+      enq_status,    '' as city,    acc.part_category as
+      part_category,    acc.PART_LMS_DATE AS part_lms_date,    '' as
+      category_description,    '' as list_description,       '' AS
       enquiry_orderreadiness_date,       concat_WS('|',PH_ENQ_PARENT_GROUP,PH_ENQ_DEALER_MAP_CD,PH_ENQ_LOC_CD,PH_ENQ_ENQ_NUM)
       as link_part_enquiry,       ACC.PH_ENQ_ENQ_NUM AS
       enquiry_number,        ACC.PH_ENQ_ENQ_DATE AS
-      enquiry_date,    First(PH_ENQ_ENQ_NUM,3) as
+      enquiry_date,    SUBSTR(PH_ENQ_ENQ_NUM,3) as
       short_enq_no,    ACC.PH_ENQ_CUST_STATE AS
       CUSTOMER_STATE,    PH_ENQ_PARENT_GROUP as
       parent_group,    PH_ENQ_DEALER_MAP_CD as dealer_map_code,    PH_ENQ_LOC_CD
-      as location_code,    PAM.PART_NUM as part_number,    PAM.PART_DESC AS
+      as location_code,    PAM.PART_NUM_VAR as part_number,    PAM.PART_DESC AS
       PART_DESCRIPTION,    IG.REGION_CODE AS REGION_CODE,    IG.STATE_CODE AS
       STATE_CODE,    DM.location_description as
       LOCATION_DESCRIPTION,    ACC.PH_ENQ_CUST_NAME AS
-      CUSTOMER_NAME     from        accessories_sales acc        left join
-      parts_accessories_master pam on acc.PD_ENQ_part_num =
-      pam.PART_NUM_VAR       left JOIN dealer_master DM on
+      CUSTOMER_NAME,    ACC.part_qty as
+      part_quantity     from        accessories_sales acc        left join
+      (select distinct PART_NUM_VAR,
+      part_desc,MRP_1,PARENT_GROUP_VAR,dealer_map_code_var,location_code_var
+      from parts_accessories_master) pam on acc.PD_ENQ_part_num =
+      pam.PART_NUM_VAR    and acc.PH_ENQ_PARENT_GROUP = pam.PARENT_GROUP_VAR and
+      acc.PH_ENQ_DEALER_MAP_CD = pam.dealer_map_code_var and acc.PH_ENQ_LOC_CD =
+      pam.location_code_var        left JOIN (SELECT DISTINCT * FROM
+      Dealer_Master WHERE PARENT_GROUP<>'99999' AND DEALER_MAP_CODE<>99999 AND
+      LOCATION_CODE<>'999' AND PRINCIPAL_MAP_CD = 1) DM on
       concat(         acc.PH_ENQ_PARENT_GROUP,          '|',          cast(           acc.PH_ENQ_DEALER_MAP_CD
       as string         ),          '|',          acc.PH_ENQ_LOC_CD       )=
       concat(         DM.PARENT_GROUP,          '|',          cast(DM.dealer_map_code
-      as string),          '|',          DM.location_code       )        inner
+      as string),          '|',          DM.location_code       )        left
       join (         select            distinct
       state_name,            region_name,            state_code,            region_code          from            geography_master       )
       ig on TRIM(acc.PH_ENQ_CUST_STATE)= TRIM(ig.STATE_CODE)        AND
       DM.region_code = IG.REGION_CODE   )  GROUP
-      BY    part_description,   location_description,   region_code,   state_code,   status,   enq_status,   enquiry_orderreadiness_date,   link_part_enquiry,   parent_group,   dealer_map_code,   location_code,   short_enq_no,   part_number,   CUSTOMER_NAME,   CUSTOMER_STATE,   state,    source_of_enquiry,    remarks,    mode_of_enquiry,    invoice_number,    for_code,    region,    dealer_name,    dealer_code,    invoice_date,    enquiry_number,    enquiry_date
+      BY    part_description,   location_description,   region_code,   state_code,   status,   enq_status,   city,   part_category,   part_lms_date,   category_description,   list_description,   enquiry_orderreadiness_date,   link_part_enquiry,   parent_group,   dealer_map_code,   location_code,   short_enq_no,   part_number,   CUSTOMER_NAME,   CUSTOMER_STATE,   state,    source_of_enquiry,    customer_remarks,    mode_of_enquiry,    invoice_number,    for_code,    region,    dealer_name,    dealer_code,    invoice_date,    enquiry_number,    enquiry_date,   part_quantity
     sequenceNo: 5
     references:
-      - alias: Dealer_Master_1
-        sqlReference: dealer_master
       - alias: Geography_Master_1
         sqlReference: geography_master
       - alias: Accessories_Sales_1
         sqlReference: accessories_sales
       - alias: Parts_Accessories_Master_1
         sqlReference: parts_accessories_master
+      - alias: Dealer_Master_1
+        sqlReference: dealer_master
 controlPort:
   dataQualityRules:
     RecordCountCheck:
